@@ -1,0 +1,31 @@
+import pandas as pd
+from statsmodels.tsa.arima.model import ARIMA
+import matplotlib.pyplot as plt
+
+# Load dataset
+data = pd.read_csv('stock_prices.csv', parse_dates=['date'], index_col='date')
+
+# Plot time series
+data.plot()
+plt.show()
+
+# Fit ARIMA model
+model = ARIMA(data['price'], order=(5, 1, 0))
+model_fit = model.fit()
+
+# Forecast
+forecast = model_fit.forecast(steps=30)
+print(forecast)
+
+# Plot forecast
+plt.figure(figsize=(10, 6))
+plt.plot(data.index, data['price'], label='Observed')
+plt.plot(forecast.index, forecast, label='Forecast', color='red')
+plt.xlabel('Date')
+plt.ylabel('Price')
+plt.title('Stock Price Forecasting')
+plt.legend()
+plt.show()
+
+# Save model
+model_fit.save('stock_price_forecasting_model.pkl')
